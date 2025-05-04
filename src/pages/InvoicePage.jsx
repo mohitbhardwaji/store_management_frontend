@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import axios from 'axios';
+import { apiServerUrl } from '../constant/constants';
 
 const InvoicePage = () => {
   const { state } = useLocation();
@@ -14,7 +15,7 @@ const InvoicePage = () => {
       if (!state && id) {
         try {
           const token = localStorage.getItem('token');
-          const res = await axios.get(`http://localhost:3000/bill/${id}`, {
+          const res = await axios.get(`${apiServerUrl}/bill/${id}`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },

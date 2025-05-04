@@ -70,7 +70,7 @@ button:focus-visible {
 } */
 /* Add this to your global CSS or include it inline in the JSX */
 .input-style {
-  border: 2px solid #d1d5db; /* Light gray border */
+  border: 2px solid #cbced453; /* Light gray border */
   border-radius: 8px; /* Modern rounded corners */
   padding: 10px 12px; /* Add some padding inside the input */
   width: 100%; /* Ensure input takes up the full width */
@@ -84,4 +84,37 @@ button:focus-visible {
   border-color: #4f8ef7; /* Blue border on focus */
   outline: none; /* Remove default focus outline */
   box-shadow: 0 0 0 2px rgba(79, 143, 247, 0.3); /* Soft glow effect around the border */
+}
+
+/* Optional styling for toggle-checkbox if using plain checkbox */
+.toggle-checkbox {
+  width: 40px;
+  height: 20px;
+  appearance: none;
+  background-color: #ddd;
+  border-radius: 9999px;
+  position: relative;
+  outline: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.toggle-checkbox:checked {
+  background-color: #1EA0DC;
+}
+
+.toggle-checkbox::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+}
+
+.toggle-checkbox:checked::before {
+  transform: translateX(20px);
 }

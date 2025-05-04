@@ -1,24 +1,26 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import axios from 'axios';
+import { apiServerUrl } from "../constant/constants";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [person, setPerson] = useState(null);
 
   const fetchProfile = async () => {
     const token = localStorage.getItem('token');
     if (!token) return;
 
     try {
-      const res = await axios.get('http://localhost:3000/auth/profile', {
+      const res = await axios.get(`${apiServerUrl}/auth/profile`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      setUser(res.data);
+      setPerson(res.data);
+      localStorage.setItem('person', JSON.stringify(res.data)); 
     } catch (error) {
-      setUser(null);
+      setPerson(null);
       localStorage.removeItem('token');
     }
   };
@@ -28,7 +30,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, setUser, fetchProfile }}>
+    <AuthContext.Provider value={{ person, setPerson, fetchProfile }}>
       {children}
     </AuthContext.Provider>
   );

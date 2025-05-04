@@ -1,9 +1,9 @@
-import React, { Component, useRef, useState } from 'react';
-import logo from '../assets/coolzone.png';
+import React, { Component, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useReactToPrint } from 'react-to-print';
+import logo from '../assets/coolzone.png'
 
-export  class ComponentToPrint extends Component {
+export class ToPrint extends Component {
   render() {
     const {
       formType,
@@ -39,12 +39,12 @@ export  class ComponentToPrint extends Component {
           <div className="mb-2 text-center">
             <h2 className="text-xl font-bold">RAVI ELECTRONICS</h2>
             <p className="text-xs">Opp. Acharan Press, Jinsi Marg No.1, Lashkar, Gwalior (M.P.)</p>
-            <p className="text-base font-semibold mt-1">{formType == 'Invoice'?'INVOICE':'ESTIMATE'}</p>
+            <p className="text-base font-semibold mt-1">{formType}</p>
           </div>
 
           <div className="mb-1">
             <div>
-              <p><strong>{formType == 'Invoice'?'Invoice No:':''}</strong> {formType == 'Invoice'? _id :""}</p>
+              {/* <p><strong>{formType == 'Invoice'?'Invoice No:':''}</strong> {formType == 'Invoice'? _id :""}</p> */}
               <p><strong>Date:</strong> {new Date(createdAt).toLocaleDateString()}</p>
               <p><strong>Name:</strong> {customerName}</p>
               <p><strong>Address:</strong> {customerAddress}</p>
@@ -146,8 +146,7 @@ export  class ComponentToPrint extends Component {
     );
   }
 }
-
-const OrderBillPage = () => {
+const CustomerOrder = () => {
   const { state } = useLocation();
   const contentRef = useRef(null);
   const handlePrint = useReactToPrint({ contentRef });
@@ -156,7 +155,7 @@ const OrderBillPage = () => {
 
   return (
     <div className="p-8 max-w-4xl mx-auto bg-white text-black">
-      <ComponentToPrint innerRef={contentRef} billData={state} />
+      <ToPrint innerRef={contentRef} billData={state} />
 
       <div className="text-center mt-10 print-button">
         <button
@@ -169,5 +168,4 @@ const OrderBillPage = () => {
     </div>
   );
 };
-
-export default OrderBillPage;
+export default CustomerOrder;

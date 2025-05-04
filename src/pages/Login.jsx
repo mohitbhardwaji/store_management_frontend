@@ -6,6 +6,7 @@ import { loginUser } from '../api/auth';
 import { useAuth } from '../context/AuthContext';
 import { Eye, EyeOff } from 'lucide-react';
 import loginPage from '../assets/loginPage.svg';
+import { toast } from 'react-toastify';
 
 export default function Login() {
   const dispatch = useDispatch();
@@ -16,7 +17,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-
+  const role = ['owner', 'accounts', 'admin']
   const handleLogin = async () => {
     setError('');
     try {
@@ -24,9 +25,21 @@ export default function Login() {
       localStorage.setItem('token', data.access_token);
       dispatch(login({ user: { email }, token: data.access_token }));
       await fetchProfile();
-      navigate('/products');
+      toast.success('Login successful!');
+
+      const user_data = localStorage.getItem('person');
+      if (user_data){
+        const dt = JSON.parse(user_data);
+        console.log({dt})
+        if(role.includes(dt.role)){
+          navigate('/dashboard');
+        } else{
+          navigate('/cart');
+        }
+      } ;
+     
     } catch (err) {
-      setError('Invalid email or password');
+      toast.error('Invalid email or password');
     }
   };
 
@@ -34,7 +47,7 @@ export default function Login() {
     <div className="flex min-h-screen">
       {/* Left Side (Illustration) */}
       <div className="w-1/2 bg-[#4393fa] text-white flex flex-col justify-center  p-10">
-        <h1 className="text-5xl font-bold mb-4 text-white">Welcome to Our Company</h1>
+        <h1 className="text-5xl font-bold mb-4 text-white">Welcome to Our Store</h1>
         <p className="text-3xl mb-2">Organise your daily task</p>
         <p className="text-2xl italic">In a “simple way”</p>
         <img
