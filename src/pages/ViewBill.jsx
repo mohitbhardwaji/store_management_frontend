@@ -4,6 +4,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import logo from '../assets/coolzone.png';
 import Loader from '../components/Loader';
+import { apiServerUrl } from '../constant/constants';
 
 export default function ViewInvoice() {
   const { id } = useParams();
@@ -14,12 +15,14 @@ export default function ViewInvoice() {
     const fetchBill = async () => {
       try {
         const token = localStorage.getItem('token');
+        console.log("calling api")
         const res = await axios.get(`${apiServerUrl}/bill/id?id=${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         console.log({res})
         setBillData(res.data);
       } catch (err) {
+        console.log(err)
         toast.error('Failed to fetch invoice details');
       }
     };
