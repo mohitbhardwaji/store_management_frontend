@@ -101,7 +101,7 @@ export default function Layout() {
                 })}
             </nav>
 
-            <div className="p-3 mt-auto flex items-center justify-between bg-blue-300 rounded-xl mx-3 mb-4">
+            <div className="p-3 mt-auto flex items-center justify-between bg-blue-300 rounded-xl mx-3 mb-4" onClick={handleLogout}>
                 <div className="flex items-center gap-3">
                     <div className="bg-white p-2 rounded-full">
                         <User size={20} className="text-blue-600" />
