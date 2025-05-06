@@ -66,7 +66,7 @@ export class ToPrint extends Component {
           <table className="w-full border-collapse border border-gray-300 mb-2 text-xs">
             <thead className="bg-gray-100">
               <tr>
-                <th className="border px-2 py-1">Co.</th>
+                <th className="border px-2 py-1">SNo.</th>
                 <th className="border px-2 py-1 text-left">Item</th>
                 <th className="border px-2 py-1">Price</th>
                 <th className="border px-2 py-1">Qty</th>
@@ -110,11 +110,11 @@ export class ToPrint extends Component {
           {partialPayment && (
             <div className="mb-2 text-xs">
               <p><strong>Advance Paid:</strong> ₹{advanceAmount}</p>
-              <p><strong>Balance Due:</strong> ₹{Math.max((totalAmount + (totalAmount -(totalAmount / 1.18))).toFixed(2) - advanceAmount, 0)}</p>
+              <p><strong>Balance Due:</strong> ₹{Math.max((grandTotalAmount.toFixed(2)) - advanceAmount, 0)}</p>
             </div>
           )}
 
-          {splitPayment && (
+          { payment1 && (
             <div className="mb-2 text-xs">
               <p className="font-semibold">Payment Details:</p>
               {payment1 && payment1.amount > 0 && (
@@ -131,7 +131,7 @@ export class ToPrint extends Component {
               )}
               {payment1?.amount + payment2?.amount < totalAmount && (
                 <p className="font-semibold text-red-600">
-                  Remaining Due: ₹{totalAmount - (payment1?.amount || 0) - (payment2?.amount || 0)}
+                  Remaining Due: ₹{grandTotalAmount - (payment1?.amount || 0) - (payment2?.amount || 0)}
                 </p>
               )}
             </div>

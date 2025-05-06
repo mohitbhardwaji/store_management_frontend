@@ -30,7 +30,7 @@ export default function Products() {
 
       const delay = new Promise((resolve) => setTimeout(resolve, 100)); // 1.5 sec delay
 
-      const request = await axios.get('http://localhost:3000/stocks/getstock', {
+      const request = await axios.get(`${apiServerUrl}/stocks/getstock`, {
         params: {
           search,
           page,
@@ -139,7 +139,7 @@ export default function Products() {
     
    );
 
-  return (
+   return (
     <div className="p-4 bg-white rounded-xl relative">
       {/* Excel Upload Modal */}
       <ExcelUploadModal
@@ -147,95 +147,93 @@ export default function Products() {
         onClose={handleCloseUploadModal}
         onFileUpload={handleFileUpload}
       />
-
+  
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl text-[#0D8BC5] font-bold">Inventory Management</h1>
-
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-4">
+        <h1 className="text-2xl md:text-3xl text-[#0D8BC5] font-bold">Inventory Management</h1>
+  
         {/* Search */}
-        <div className="flex items-center border border-gray-300 rounded-xl  gap-2 px-3 shadow-lg ">
+        <div className="flex w-full md:w-auto items-center border border-gray-300 rounded-xl gap-2 px-3 shadow-lg">
           <input
             type="text"
             placeholder="Search Product Number"
             value={searchQuery}
             onChange={handleSearch}
-            className="px-4 py-2 "
+            className="flex-1 px-4 py-2 min-w-0"
           />
           <FaSearch className="text-blue-500" />
         </div>
-
-        {/* Add New Stock and Upload Buttons */}
-        <div className="flex gap-2">
+  
+        {/* Add Stock & Upload Buttons */}
+        <div className="flex gap-2 justify-end md:justify-start">
           <button
             onClick={handleAddNewStock}
             className="bg-blue-400 hover:bg-blue-500 text-white p-2 rounded-full flex items-center"
           >
-            <FiPlus size={20} className="" />
+            <FiPlus size={20} />
           </button>
           <button
             onClick={handleUploadClick}
             className="bg-blue-400 hover:bg-blue-300 text-white px-3 rounded-full flex items-center"
           >
-            <GoUpload size={20} className="font-extrabold" />
+            <GoUpload size={20} />
           </button>
         </div>
       </div>
-
+  
       {error && <p className="text-red-500 mb-4">{error}</p>}
-
+  
       {/* Product Table */}
-      <div className="overflow-x-auto overflow-y-auto rounded-lg" style={{ maxHeight: '65vh' }}>
-  <table className="min-w-full table-auto relative">
-    <thead className="bg-blue-300">
-      <tr>
-        <th className="p-2 text-left font-semibold sticky left-0 bg-blue-300 z-10">Product Number</th>
-        <th className="p-2 text-left font-semibold">Category</th>
-        <th className="p-2 text-left font-semibold">Vendor</th>
-        <th className="p-2 text-left font-semibold">Stock Units</th>
-        <th className="p-2 text-left font-semibold">Sold Units</th>
-        <th className="p-2 text-left font-semibold">MRP</th>
-        <th className="p-2 text-left font-semibold">Offer Price</th>
-        <th className="p-2 text-left font-semibold">GST</th>
-        <th className="p-2 text-left font-semibold sticky right-0 bg-blue-300 z-10">Action</th>
-      </tr>
-    </thead>
-    <tbody>
-      {products.map((product, index) => (
-        <tr key={product._id} className={index % 2 === 0 ? 'bg-white' : 'bg-sky-50'}>
-          <td
-            className="p-3 hover:underline cursor-pointer truncate sticky left-0 bg-inherit"
-            onClick={() => setSearchQuery(product.productNumber)}
-            title={product.productNumber}
-          >
-            {product.productNumber.length > 25
-              ? product.productNumber.slice(0, 25) + '...'
-              : product.productNumber}
-          </td>
-          <td className="p-2">{product.product_group}</td>
-          <td className="p-2">{product.vendor}</td>
-          <td className="p-2">{product.unit} {product.unit_type}</td>
-          <td className="p-2">{product.soldUnits} {product.unit_type}</td>
-          <td className="p-2">Rs. {product.mrp}</td>
-          <td className="p-2">Rs. {product.offer_price}</td>
-          <td className="p-2">{product.gst} %</td>
-          <td className="p-2 sticky right-0 bg-inherit">
-            <button
-              onClick={() => handleEdit(product._id)}
-              className="bg-indigo-400 hover:bg-indigo-500 text-white p-2 rounded-full flex items-center"
-            >
-              <FiEdit />
-            </button>
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-</div>
-
-
+      <div className="overflow-x-auto rounded-lg" style={{ maxHeight: '65vh' }}>
+        <table className="min-w-full table-auto">
+          <thead className="bg-blue-300">
+            <tr>
+              <th className="p-2 text-left font-semibold">Product Number</th>
+              <th className="p-2 text-left font-semibold">Category</th>
+              <th className="p-2 text-left font-semibold">Vendor</th>
+              <th className="p-2 text-left font-semibold">Stock Units</th>
+              <th className="p-2 text-left font-semibold">Sold Units</th>
+              <th className="p-2 text-left font-semibold">MRP</th>
+              <th className="p-2 text-left font-semibold">Offer Price</th>
+              <th className="p-2 text-left font-semibold">GST</th>
+              <th className="p-2 text-left font-semibold">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {products.map((product, index) => (
+              <tr key={product._id} className={index % 2 === 0 ? 'bg-white' : 'bg-sky-50'}>
+                <td
+                  className="p-3 hover:underline cursor-pointer truncate"
+                  onClick={() => setSearchQuery(product.productNumber)}
+                  title={product.productNumber}
+                >
+                  {product.productNumber.length > 25
+                    ? product.productNumber.slice(0, 25) + '...'
+                    : product.productNumber}
+                </td>
+                <td className="p-2">{product.product_group}</td>
+                <td className="p-2">{product.vendor}</td>
+                <td className="p-2">{product.unit} {product.unit_type}</td>
+                <td className="p-2">{product.soldUnits} {product.unit_type}</td>
+                <td className="p-2">Rs. {product.mrp}</td>
+                <td className="p-2">Rs. {product.offer_price}</td>
+                <td className="p-2">{product.gst} %</td>
+                <td className="p-2">
+                  <button
+                    onClick={() => handleEdit(product._id)}
+                    className="bg-indigo-400 hover:bg-indigo-500 text-white p-2 rounded-full flex items-center"
+                  >
+                    <FiEdit />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+  
       {/* Pagination */}
-      <div className="flex justify-center items-center p-4 gap-2 mt-4 rounded-full">
-        {/* Left Arrow */}
+      <div className="flex justify-center items-center p-4 gap-2 mt-4 rounded-full flex-wrap">
         <button
           onClick={() => handlePageChange(currentPage - 1)}
           className="p-2 rounded-full hover:bg-blue-200"
@@ -243,8 +241,7 @@ export default function Products() {
         >
           <FiChevronLeft size={20} />
         </button>
-
-        {/* Page Numbers */}
+  
         {getPageWindow().map((page) => (
           <button
             key={page}
@@ -258,8 +255,7 @@ export default function Products() {
             {page}
           </button>
         ))}
-
-        {/* Right Arrow */}
+  
         <button
           onClick={() => handlePageChange(currentPage + 1)}
           className="p-2 rounded-full hover:bg-blue-200"
@@ -270,4 +266,5 @@ export default function Products() {
       </div>
     </div>
   );
+  
 }

@@ -169,8 +169,7 @@ const CartPage = () => {
         };
 
         try {
-            
-            const response = await fetch(`${apiServerUrl}http://localhost:3000/bill`, {
+            const response = await fetch("http://localhost:3000/bill", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -239,7 +238,7 @@ const CartPage = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
                     <div>
                         <label htmlFor="customerName" className="text-sm font-medium text-[#1EA0DC] mb-1 block">
-                            Customer Name <span className="text-red-500">*</span>
+                            Customer Name 
                         </label>
                         <input
                             id="customerName"
@@ -248,12 +247,11 @@ const CartPage = () => {
                             className="input-style"
                             value={customer.name}
                             onChange={(e) => setCustomer({ ...customer, name: e.target.value })}
-                            required
                         />
                     </div>
                     <div>
                         <label htmlFor="phoneNumber" className="text-sm font-medium text-[#1EA0DC] mb-1 block">
-                            Phone Number<span className="text-red-500">*</span>
+                            Phone Number
                         </label>
                         <input
                             id="phoneNumber"
@@ -262,7 +260,6 @@ const CartPage = () => {
                             className="input-style"
                             value={customer.number}
                             onChange={(e) => setCustomer({ ...customer, number: e.target.value })}
-                            required
                         />
                     </div>
 
@@ -282,7 +279,7 @@ const CartPage = () => {
 
                     <div className="sm:col-span-3">
                         <label htmlFor="address" className="text-sm font-medium text-[#1EA0DC] mb-1 block">
-                            Address<span className="text-red-500">*</span>
+                            Address
                         </label>
                         <input
                             id="address"
@@ -291,7 +288,6 @@ const CartPage = () => {
                             className="input-style"
                             value={customer.address}
                             onChange={(e) => setCustomer({ ...customer, address: e.target.value })}
-                            required
                         />
                     </div>
 
@@ -414,13 +410,13 @@ const CartPage = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-6">
                     <div>
                         <label htmlFor="address" className="text-sm font-medium text-[#1EA0DC] mb-1 block">
-                            Delivery Date <span className="text-red-500">*</span>
+                            Delivery Date
                         </label>
-                        <input type="date" className="input-style text-gray-500" value={deliveryDate} onChange={(e) => setDeliveryDate(e.target.value)}  required />
+                        <input type="date" className="input-style text-gray-500" value={deliveryDate} onChange={(e) => setDeliveryDate(e.target.value)} />
                     </div>
                     <div>
                         <label htmlFor="address" className="text-sm font-medium text-[#1EA0DC] mb-1 block">
-                            Sales Person <span className="text-red-500">*</span>
+                            Sales Person
                         </label>
                         <select className="input-style text-gray-500" value={salesperson} onChange={(e) => setSalesperson(e.target.value)}>
                             <option value="" >Select Salesperson</option>
@@ -505,7 +501,7 @@ const CartPage = () => {
 
                         {/* Payment Method 1 */}
                         <div className="mb-4">
-                            <p className="font-semibold mb-2">Payment Method 1 <span className="text-red-500">*</span></p>
+                            <p className="font-semibold mb-2">Payment Method 1</p>
                             <div className="flex gap-4 mb-2">
                                 {paymentModes.map((mode) => (
                                     <label key={mode} className="flex items-center gap-2">
@@ -515,7 +511,6 @@ const CartPage = () => {
                                             value={mode}
                                             checked={paymentMode1 === mode}
                                             onChange={() => setPaymentMode1(mode)}
-                                            required
                                         />
                                         {mode}
                                     </label>
@@ -528,7 +523,6 @@ const CartPage = () => {
                                 className="input-style mb-2"
                                 value={paymentAmount1}
                                 onChange={(e) => setPaymentAmount1(e.target.value)}
-                                reaquired
                             />
 
                             {(paymentMode1 === 'Online' || paymentMode1 === 'Card') && (

@@ -17,7 +17,9 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const role = ['owner', 'accounts', 'admin']
+
+  const role = ['owner', 'accounts', 'admin'];
+
   const handleLogin = async () => {
     setError('');
     try {
@@ -28,40 +30,37 @@ export default function Login() {
       toast.success('Login successful!');
 
       const user_data = localStorage.getItem('person');
-      if (user_data){
+      if (user_data) {
         const dt = JSON.parse(user_data);
-        console.log({dt})
-        if(role.includes(dt.role)){
+        if (role.includes(dt.role)) {
           navigate('/dashboard');
-        } else{
+        } else {
           navigate('/cart');
         }
-      } ;
-     
+      }
     } catch (err) {
       toast.error('Invalid email or password');
     }
   };
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex flex-col md:flex-row min-h-screen">
       {/* Left Side (Illustration) */}
-      <div className="w-1/2 bg-[#4393fa] text-white flex flex-col justify-center  p-10">
-        <h1 className="text-5xl font-bold mb-4 text-white">Welcome to Our Store</h1>
-        <p className="text-3xl mb-2">Organise your daily task</p>
-        <p className="text-2xl italic">In a “simple way”</p>
+      <div className="md:w-1/2 w-full bg-[#4393fa] text-white flex flex-col justify-center items-center p-6 md:p-10">
+        <h1 className="text-3xl md:text-5xl font-bold mb-2 text-center">Welcome to Our Store</h1>
+        <p className="text-lg md:text-2xl mb-1">Organise your daily task</p>
+        <p className="text-base md:text-xl italic mb-4">In a “simple way”</p>
         <img
           src={loginPage}
           alt="Illustration"
-          className="w-3/4 mt-4 "
+          className="w-3/4 md:w-2/3 max-w-xs md:max-w-md"
         />
-
       </div>
 
       {/* Right Side (Login Form) */}
-      <div className="w-1/2 flex justify-center items-center bg-white">
-        <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-lg">
-          <h2 className="text-2xl font-semibold mb-6">Sign-in to your account</h2>
+      <div className="md:w-1/2 w-full flex justify-center items-center bg-white py-10 px-4 md:px-0">
+        <div className="w-full max-w-md bg-white p-6 md:p-8 rounded-xl shadow-lg">
+          <h2 className="text-xl md:text-2xl font-semibold mb-6 text-center md:text-left">Sign-in to your account</h2>
 
           {error && (
             <p className="text-red-500 text-sm mb-4 text-center">{error}</p>
@@ -98,7 +97,7 @@ export default function Login() {
               </div>
             </div>
 
-            <div className="text-sm text-[#2a84f7] hover:underline">
+            <div className="text-sm text-[#2a84f7] hover:underline text-right">
               <a href="#">Forgot Password?</a>
             </div>
 
@@ -109,7 +108,7 @@ export default function Login() {
               Login
             </button>
 
-            <p className="text-xs text-gray-500 mt-2">
+            <p className="text-xs text-gray-500 mt-2 text-center">
               By Continuing, You Agree With Our{' '}
               <span className="text-[#2a84f7] underline cursor-pointer">
                 Terms & Conditions
