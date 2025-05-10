@@ -8,7 +8,6 @@ import { apiServerUrl } from '../constant/constants';
 
 export default function ViewInvoice() {
   const { id } = useParams();
-  console.log({id})
   const [billData, setBillData] = useState(null);
 
   useEffect(() => {
@@ -16,14 +15,19 @@ export default function ViewInvoice() {
       try {
         const token = localStorage.getItem('token');
         console.log("calling api")
-        const res = await axios.get(`${apiServerUrl}/bill/id?id=${id}`, {
+        const res = await axios.get(`${apiServerUrl}/bill/fetch-bill?bill_id=${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        console.log({res})
-        setBillData(res.data);
+        setBillData(res.data.bills[0]);
+        console.log(billData)
       } catch (err) {
-        console.log(err)
-        toast.error('Failed to fetch invoice details');
+        if(err.response?.status === 401 ){
+          toast.error('Token Expired please login again');
+          navigate('/login');
+        } else {
+          toast.error('Failed to fetch invoice details');
+        }
+        
       }
     };
     fetchBill();

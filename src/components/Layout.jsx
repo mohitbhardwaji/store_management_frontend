@@ -36,12 +36,15 @@ export default function Layout() {
         const fetchBills = async () => {
             try {
               const token = localStorage.getItem('token');
-              const res = await axios.get(`${apiServerUrl}/bill`, {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              });
-              setBillCount(res.data.total);
+              const res = await axios.get(
+                `${apiServerUrl}/bill/fetch-bill`,
+                {
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                  },
+                }
+              );
+              setBillCount(res.data.totalBillsInspiteOfFormType);
             } catch (err) {
               console.error('Failed to fetch bills:', err);
             }

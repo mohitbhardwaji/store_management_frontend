@@ -4,14 +4,15 @@ import { useNavigate } from 'react-router-dom';
 import { FiChevronLeft, FiChevronRight, FiEdit, FiEye } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 import Loader from '../components/Loader';
-import { apiLocalUrl, apiServerUrl } from '../constant/constants';
-import empty from '../assets/empty-box.png'
+import { apiServerUrl } from '../constant/constants';
+import empty from '../assets/empty-box.png';
 
 export default function Billing() {
   const [bills, setBills] = useState([]);
+  const [isData, setIsData] = useState(0)
   const [formType, setFormType] = useState('Order Form');
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const windowSize = 5;
@@ -20,12 +21,11 @@ export default function Billing() {
     const fetchBills = async () => {
       setLoading(true);
       const token = localStorage.getItem('token');
-
       const delay = new Promise((resolve) => setTimeout(resolve, 500));
 
       try {
         const billRequest = axios.get(
-          `${apiServerUrl}/bill?formType=${encodeURIComponent(formType)}`,
+          `${apiServerUrl}/bill/fetch-bill?formType=${encodeURIComponent(formType)}&page=${currentPage}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -35,18 +35,22 @@ export default function Billing() {
 
         const [res] = await Promise.all([billRequest, delay]);
         setBills(Array.isArray(res.data.bills) ? res.data.bills : []);
+        setIsData(res.data.totalBillsInspiteOfFormType)
+        setTotalPages(res.data.totalPages || 1);
       } catch (err) {
-        toast.error('Failed to fetch bills');
-        if (err?.response?.status === 401) navigate('/login');
+        if(err.response?.status === 401 ){
+          toast.error('Token Expired please login again');
+          navigate('/login');
+        } else {
+          toast.error('Failed to fetch bills.');
+        }
       } finally {
         setLoading(false);
       }
     };
 
     fetchBills();
-  }, [formType]);
-
-  const totalPages = Math.ceil((bills?.length || 0) / itemsPerPage);
+  }, [formType, currentPage]);
 
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {
@@ -67,11 +71,6 @@ export default function Billing() {
     return Array.from({ length: end - start + 1 }, (_, i) => start + i);
   };
 
-  const paginatedBills = bills.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -82,7 +81,7 @@ export default function Billing() {
 
   return (
     <div className="">
-      {bills.length > 0 ? (
+      {isData > 0 ? (
         <div className="bg-white p-4 rounded-xl relative">
           {/* Header */}
           <div className="flex justify-between items-center mb-6">
@@ -90,10 +89,12 @@ export default function Billing() {
             <div className="flex justify-between items-center mb-4">
               <select
                 value={formType}
-                onChange={(e) => setFormType(e.target.value)}
+                onChange={(e) => {
+                  setFormType(e.target.value);
+                  setCurrentPage(1);
+                }}
                 className="border px-2 py-1 rounded-md"
               >
-                <option value="Select All">Select All</option>
                 <option value="Order Form">Order Form</option>
                 <option value="Invoice">Invoice</option>
                 <option value="Estimate">Estimate</option>
@@ -101,9 +102,7 @@ export default function Billing() {
 
               <button
                 className="ml-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                onClick={() => {
-                  toast.info(`Showing results for ${formType}`);
-                }}
+                onClick={() => toast.info(`Showing results for ${formType}`)}
               >
                 Filter
               </button>
@@ -125,29 +124,29 @@ export default function Billing() {
                 </tr>
               </thead>
               <tbody>
-                {paginatedBills.map((bill, index) => (
+                {bills.map((bill, index) => (
                   <tr key={bill._id} className={index % 2 === 0 ? 'bg-white' : 'bg-sky-50'}>
                     <td className="p-3">{bill.customerName}</td>
                     <td className="p-3">{bill.customerPhone}</td>
                     <td className="p-3">{bill.formType}</td>
                     <td className="p-3">{new Date(bill.createdAt).toLocaleDateString()}</td>
                     <td className="p-3">{bill.products.length}</td>
-                    <td className="p-3">₹{bill.totalAmount}</td>
+                    <td className="p-3">₹{bill.totalAmount.toFixed(2)}</td>
                     <td className="p-3">
                       <button
-                        onClick={() => navigate(`/bill/view/${bill._id}`)}
+                        onClick={() => navigate(`/customerOrder/${bill._id}`)}
                         className="text-indigo-600 hover:text-indigo-800"
                         title="View Invoice"
                       >
                         <FiEye size={20} />
                       </button>
-                      <button
+                      {/* <button
                         onClick={() => navigate(`/invoice/edit/${bill._id}`)}
                         className="text-green-600 hover:text-green-800 ml-3"
                         title="Edit Invoice"
                       >
                         <FiEdit size={20} />
-                      </button>
+                      </button> */}
                     </td>
                   </tr>
                 ))}
@@ -188,12 +187,12 @@ export default function Billing() {
             </button>
           </div>
         </div>
-      ) : (
+       ) : (
         <div className="flex flex-col items-center justify-center h-[60vh] text-gray-500">
           <img src={empty} alt="No bills" className="w-40 mb-4" />
           <p className="text-lg">No bills to show right now.</p>
         </div>
-      )}
+      )} 
     </div>
   );
 }
