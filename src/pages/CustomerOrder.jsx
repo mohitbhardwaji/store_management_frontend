@@ -156,32 +156,43 @@ export class ToPrint extends Component {
           <div className="relative min-h-[200px]"> {/* Adjust height as needed */}
           <div className="grid grid-cols-1 md:grid-cols-2 print:grid-cols-2 gap-0">
   {/* Payment Details */}
-  {formType !== 'Estimate' && (partialPayment || payment1.amount || payment2.amount) && (
-    <div className="text-xs ">
-      {partialPayment && (
-        <>
-          <p><strong>Advance Paid:</strong> ₹{advanceAmount.toFixed(2)}</p>
-          <p><strong>Balance Due:</strong> ₹{(calTotalWithGST - advanceAmount).toFixed(2)}</p>
-        </>
-      )}
-      {(payment1.amount || payment2.amount) && (
-        <>
-          <p className="font-semibold">Payment Details:</p>
-          {payment1.amount > 0 && (
-            <p><strong>Payment 1 ({payment1.mode}):</strong> ₹{payment1.amount} {payment1.transactionId && `(Transaction ID: ${payment1.transactionId})`}</p>
-          )}
-          {payment2.amount > 0 && (
-            <p><strong>Payment 2 ({payment2.mode}):</strong> ₹{payment2.amount} {payment2.transactionId && `(Transaction ID: ${payment2.transactionId})`}</p>
-          )}
-          {(payment1.amount || 0) + (payment2.amount || 0) < calTotalWithGST && (
-            <p className="font-semibold text-red-600">
-              Remaining Due: ₹{(calTotalWithGST - (payment1.amount || 0) - (payment2.amount || 0)).toFixed(2)}
-            </p>
-          )}
-        </>
-      )}
-    </div>
-  )}
+  {formType !== 'Estimate' && (partialPayment || payment1?.amount || (partialPayment && payment2?.amount)) && (
+  <div className="text-xs">
+    {partialPayment && (
+      <>
+        <p><strong>Advance Paid:</strong> ₹{advanceAmount.toFixed(2)}</p>
+        <p><strong>Balance Due:</strong> ₹{(calTotalWithGST - advanceAmount).toFixed(2)}</p>
+      </>
+    )}
+    
+    {(payment1?.amount || (partialPayment && payment2?.amount)) && (
+      <>
+        <p className="font-semibold">Payment Details:</p>
+        
+        {payment1?.amount > 0 && (
+          <p>
+            <strong>Payment 1 ({payment1.mode}):</strong> ₹{payment1.amount}
+            {payment1.transactionId && ` (Transaction ID: ${payment1.transactionId})`}
+          </p>
+        )}
+        
+        {partialPayment && payment2?.amount > 0 && (
+          <p>
+            <strong>Payment 2 ({payment2.mode}):</strong> ₹{payment2.amount}
+            {payment2.transactionId && ` (Transaction ID: ${payment2.transactionId})`}
+          </p>
+        )}
+
+        {(payment1?.amount || 0) + (partialPayment ? (payment2?.amount || 0) : 0) < calTotalWithGST && (
+          <p className="font-semibold text-red-600">
+            Remaining Due: ₹{(calTotalWithGST - ((payment1?.amount || 0) + (partialPayment ? (payment2?.amount || 0) : 0))).toFixed(2)}
+          </p>
+        )}
+      </>
+    )}
+  </div>
+)}
+
 
 
   {finance_id?.financerName && (
@@ -288,7 +299,7 @@ const CustomerOrder = () => {
 
   if (loading) return <p className="text-center mt-10">Loading...</p>;
   if (!state) return <p className="text-center mt-10">No bill data available</p>;
-
+  console.log(state)
   return (
     <div className="p-8 max-w-4xl mx-auto bg-white text-black">
       <ToPrint innerRef={contentRef} billData={state} financeData={financeData} />
