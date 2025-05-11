@@ -60,7 +60,7 @@ export class ToPrint extends Component {
 
     return (
       <div ref={this.props.innerRef} className="invoice-container border border-gray-300 pb-4 bg-white text-black">
-        <div className="flex justify-center p-3  bg-[#94989a] " >
+        <div className="flex justify-center p-3 " style={{ backgroundColor: "#94989a" }} >
           <img src={logo} alt="Company Logo" className="h-15 w-auto " />
         </div>
 
