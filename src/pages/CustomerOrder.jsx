@@ -29,7 +29,7 @@ export class ToPrint extends Component {
       payment1 = {},
       payment2 = {},
     } = this.props.billData || {};
-    const {priceAfterFinance} = this.props.financeData
+    const {priceAfterFinance,emiPerMonth} = this.props.financeData
     const calculateAmount = (products) => {
       let totalAmount = 0;
       let totalGST = 0;
@@ -189,6 +189,7 @@ export class ToPrint extends Component {
       <p><strong>Financer Name:</strong> {finance_id.financerName}</p>
       <p><strong>Downpayment:</strong> ₹{finance_id.downpayment}</p>
       <p><strong>EMI Tenure:</strong> {finance_id.emiTenure} months</p>
+      <p><strong>EMI Amount:</strong> ₹{emiPerMonth} /month</p>
       <p><strong>Rate of Interest:</strong> {finance_id.roi}%</p>
       <p><strong>Price After Finance:</strong> ₹{(Number(priceAfterFinance)+Number(finance_id.downpayment)).toFixed(2)}</p>
     </div>
@@ -241,14 +242,33 @@ const CustomerOrder = () => {
           discount:bill.finance_id.discount
        }
 
-        // 3. Call the finance API
-       if(bill.finance_id){ 
+      
+       if (bill.finance_id) {
+        const payload = {
+          product_rate: bill.totalAmount,
+          downpayment: bill.finance_id.downpayment,
+          emiTenure: bill.finance_id.emiTenure,
+          roi: bill.finance_id.roi,
+          discount: bill.finance_id.discount,
+        };
+      
         const financeRes = await axios.post(`${apiServerUrl}/finance/calculate`, payload, {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${token}` },
         });
-
-        setFinanceData(financeRes.data);
+      
+        const result = financeRes.data;
+      
+        const emiPerMonth = (result.priceAfterFinance / payload.emiTenure).toFixed(2);
+        const totalPayable = result.priceAfterFinance.toFixed(2);
+        console.log(emiPerMonth)
+        setFinanceData({
+          ...result,
+          emiPerMonth,
+          totalPayable,
+          tenure: payload.emiTenure,
+        });
       }
+     
       } catch (err) {
         if (err.response?.status === 401) {
           toast.error('Token Expired. Please login again.');
