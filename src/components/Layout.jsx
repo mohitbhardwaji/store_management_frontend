@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { Home, ClipboardPlus, Plane, Calendar, ClipboardList, User, LogOut, Menu, ChevronLeft, Receipt, Package, ShoppingCart, FileText, Box } from 'lucide-react';
+import { Home, ClipboardPlus, Plane, Calendar, ClipboardList, User, LogOut, Menu, ChevronLeft, Receipt, Package, ShoppingCart, FileText, Box, UsersRound } from 'lucide-react';
 import coolLogo from '../assets/coolzone.png'
-import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import { apiServerUrl } from "../constant/constants";
 
@@ -19,7 +18,7 @@ export default function Layout() {
         { name: 'Inventory', to: '/products', icon: <Package size={22} />, roles: role },
         { name: 'Forms', to: '/cart', icon: <ShoppingCart size={22} /> },
         { name: 'Bills', to: '/billing', icon: <FileText size={22} />, badge: billCount },
-        // { name: 'Stock', to: '/stock', icon: <Box size={22} />, roles: role },
+        { name: 'Employees', to: '/employees', icon: <UsersRound size={22} />, roles: role },
     ];
     
     const navItems = baseNavItems.filter(item => {

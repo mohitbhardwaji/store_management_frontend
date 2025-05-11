@@ -1,6 +1,12 @@
 import React from 'react';
 
-const DeliveryDetailsForm = ({ deliveryDate, salesperson, salespersons, onDeliveryDateChange, onSalespersonChange }) => {
+const DeliveryDetailsForm = ({
+  deliveryDate,
+  salesperson,
+  salespersons,
+  onDeliveryDateChange,
+  onSalespersonChange,
+}) => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-6">
       <div>
@@ -26,8 +32,8 @@ const DeliveryDetailsForm = ({ deliveryDate, salesperson, salespersons, onDelive
         >
           <option value="">Select Salesperson</option>
           {salespersons.map((person, index) => (
-            <option key={index} value={person}>
-              {person}
+            <option key={index} value={person._id}>
+              {person.name}
             </option>
           ))}
         </select>

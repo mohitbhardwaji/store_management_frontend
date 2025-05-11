@@ -17,6 +17,7 @@ import EditProduct from './pages/EditProduct';
 import ViewBillPage from './pages/ViewBill';
 import ViewInvoice from './pages/ViewBill';
 import CreateProduct from './pages/CreateProduct';
+import Employees from './pages/Employees';
 
 export default function App() {
   const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
@@ -41,6 +42,7 @@ export default function App() {
           <Route path="/orderBill" element={authenticated ? <OrderBillPage /> : <Navigate to="/login" />} />
           <Route path="/customerOrder/:billId" element={authenticated ? <CustomerOrder /> : <Navigate to="/login" />} />
           <Route path="/createproduct" element={authenticated ? <CreateProduct /> : <Navigate to="/login" />} />
+          <Route path="/employees" element={authenticated ? <Employees /> : <Navigate to="/login" />} />
         </Route>
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>

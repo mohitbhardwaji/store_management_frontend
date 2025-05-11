@@ -17,15 +17,15 @@ const CartPage = () => {
   const [products, setProducts] = useState([]);
   const [deliveryDate, setDeliveryDate] = useState('');
   const [salesperson, setSalesperson] = useState('');
-  const salespersons = ['John Doe', 'Jane Smith', 'Tom Johnson'];
-  const [finance, setFinance] = useState(false);  
+  const [salespersons, setSalespersons] = useState([]);
+  const [finance, setFinance] = useState(false);
   const [selectedFinancer, setSelectedFinancer] = useState('');
   const [downPayment, setDownPayment] = useState(0);
   const [tenure, setTenure] = useState(0);
   const [roi, setROI] = useState(0);
   const [discount, setDiscount] = useState(0);
-  const financerOptions = ['Bajaj Finance', 'HDFC', 'ICICI', 'Axis Bank']; 
-  const [advanceAmount, setAdvanceAmount] = useState(0); 
+  const financerOptions = ['Bajaj Finance', 'HDFC', 'ICICI', 'Axis Bank'];
+  const [advanceAmount, setAdvanceAmount] = useState(0);
   const [paymentMode, setPaymentMode] = useState('cash');
   const [transactionId, setTransactionId] = useState('');
   const [splitPayment, setSplitPayment] = useState(false);
@@ -34,6 +34,7 @@ const CartPage = () => {
   const [secondTransactionId, setSecondTransactionId] = useState('');
   const [financeTotal, setFinanceTotal] = useState();
   const totalAdvance = advanceAmount + secondAdvanceAmount
+  const [selectedSalesPersonId, setSelectedSalesPersonId] = useState('');
 
   const calculateAmount = () => {
     let totalAmount = 0;
@@ -44,41 +45,52 @@ const CartPage = () => {
       const gst = product.gst || 0;  // Default to 0 if GST is not provided
       totalGST += (price * gst / 100) * quantity;
       totalAmount += price * quantity;
-      
+
     });
 
-    const totalWithGST = (totalAmount );
+    const totalWithGST = (totalAmount);
     return { totalAmount: totalAmount.toFixed(2) - totalGST.toFixed(2), totalGST, totalWithGST };
   };
 
 
   const { totalAmount, totalGST, totalWithGST } = calculateAmount();
 
+  useEffect(() => {
+    fetchSalesPerson();
+  }, []);
 
-useEffect(() => {
-
-  const calculate = async () => {
+  const fetchSalesPerson = async () => {
     try {
-      const result = await CalcultedFinance({
-        product_rate: totalWithGST.toFixed(2),
-        downpayment: downPayment,
-        emiTenure: tenure,
-        roi: roi,
-        discount: discount || 0,
-      });
-      setFinanceTotal(result);
-      console.log(result);
-    } catch (err) {
-      toast.error('Finance calculation failed');
+      const response = await axios.get(`${apiServerUrl}/sales-executives`);
+      // const data = await response.json();
+      setSalespersons(response.data.data);
+    } catch (error) {
+      console.error('Error:', error);
     }
   };
 
-  if (finance && downPayment && tenure && roi) {
-    calculate();
-  }
-}, [finance,downPayment,tenure,roi,discount]);
+  useEffect(() => {
 
-console.log(downPayment)
+    const calculate = async () => {
+      try {
+        const result = await CalcultedFinance({
+          product_rate: totalWithGST.toFixed(2),
+          downpayment: downPayment,
+          emiTenure: tenure,
+          roi: roi,
+          discount: discount || 0,
+        });
+        setFinanceTotal(result);
+      } catch (err) {
+        toast.error('Finance calculation failed');
+      }
+    };
+
+    if (finance && downPayment && tenure && roi) {
+      calculate();
+    }
+  }, [finance, downPayment, tenure, roi, discount]);
+
 
   const handleCustomerChange = (field, value) => {
     setCustomer(prev => ({
@@ -139,7 +151,7 @@ console.log(downPayment)
       customerPhone: customer.number,
       customerAltPhone: customer.alternateNumber,
       products: products.map((product) => ({
-        product_id: product.productId || "", 
+        product_id: product.productId || "",
         productNumber: product.productName || "",
         product_group: product.product_group || "",
         gst: product.gst || 0,
@@ -155,27 +167,26 @@ console.log(downPayment)
       isFinance: finance,
       finance: finance
         ? {
-            financerName: selectedFinancer,
-            downpayment: parseFloat(downPayment) || 0,
-            emiTenure: parseInt(tenure) || 0,
-            roi: parseFloat(roi) || 0,
-            discount: parseFloat(discount) || 0,
-            priceAfterFinance: parseFloat(totalWithGST) - parseFloat(discount || 0),
-          }
+          financerName: selectedFinancer,
+          downpayment: parseFloat(downPayment) || 0,
+          emiTenure: parseInt(tenure) || 0,
+          roi: parseFloat(roi) || 0,
+          discount: parseFloat(discount) || 0,
+          priceAfterFinance: parseFloat(totalWithGST) - parseFloat(discount || 0),
+        }
         : null,
 
-          payment1: formType !== 'Estimate'?{
-            amount: parseFloat(advanceAmount),
-            mode: paymentMode,
-            transactionId: transactionId,
-          }:null,
-          payment2: splitPayment?{
-            amount: parseFloat(secondAdvanceAmount),
-            mode: secondPaymentMode,
-            transactionId: secondTransactionId,
-          }:null
+      payment1: formType !== 'Estimate' ? {
+        amount: parseFloat(advanceAmount),
+        mode: paymentMode,
+        transactionId: transactionId,
+      } : null,
+      payment2: splitPayment ? {
+        amount: parseFloat(secondAdvanceAmount),
+        mode: secondPaymentMode,
+        transactionId: secondTransactionId,
+      } : null
     };
-  
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`${apiServerUrl}/bill/create-bill`, {
@@ -186,33 +197,31 @@ console.log(downPayment)
         },
         body: JSON.stringify(payload),
       });
-  
+
       const data = await response.json();
-      console.log(data)
-      if(response.status <= 300
-        ){
-          toast.success('Bill created successfully!');
-          if (formType === "Order Form") {
-            navigate(`/customerOrder/${data.billId}`);
+
+      if (response.status <= 300
+      ) {
+        toast.success('Bill created successfully!');
+        if (formType === "Order Form") {
+          navigate(`/customerOrder/${data.billId}`);
         } else {
-          console.log("in else")
-            navigate(`/customerOrder/${data.billId}`);
+          navigate(`/customerOrder/${data.billId}`);
         }
-        } else {
-          throw new Error()
-        }
-     
-      // Optionally redirect to invoice page
+      } else {
+        throw new Error()
+      }
+
     } catch (error) {
       toast.error(`Bill generation failed. Please try again.`);
     }
     // navigate("/customerOrder/681cf6f78328a891a447c0fa");
   };
-  
+
   const CalcultedFinance = async ({ product_rate, downpayment, emiTenure, roi, discount }) => {
     try {
       const token = localStorage.getItem('token');
-  
+
       const response = await axios.post(
         `${apiServerUrl}/finance/calculate`,
         {
@@ -229,7 +238,7 @@ console.log(downPayment)
           },
         }
       );
-  let sum = (response.data.priceAfterFinance + downpayment)
+      let sum = (response.data.priceAfterFinance + downpayment)
       return sum; // contains calculated EMI and other values
     } catch (error) {
       console.error('Finance calculation failed:', error);
@@ -239,7 +248,7 @@ console.log(downPayment)
 
 
 
-  
+
   return (
     <div className="bg-gray-100 min-h-screen py-10 px-4 sm:px-10 pb-5">
       <div className="max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow-xl">
@@ -275,9 +284,10 @@ console.log(downPayment)
             deliveryDate={deliveryDate}
             salesperson={salesperson}
             salespersons={salespersons}
-            onDeliveryDateChange={handleDeliveryDateChange}
-            onSalespersonChange={handleSalespersonChange}
+            onDeliveryDateChange={setDeliveryDate}
+            onSalespersonChange={setSalesperson}
           />
+
 
           {/* Finance Toggle Section */}
           <div className="flex items-center justify-between mb-4">
@@ -330,34 +340,34 @@ console.log(downPayment)
             downPayment={downPayment}
           />
 
-{formType !== 'Estimate' && (
-  <PaymentSection
-    totalAmount={parseFloat(totalWithGST)}
-    advanceAmount={advanceAmount}
-    paymentMode={paymentMode}
-    transactionId={transactionId}
-    splitPayment={splitPayment}
-    secondAdvanceAmount={secondAdvanceAmount}
-    secondPaymentMode={secondPaymentMode}
-    secondTransactionId={secondTransactionId}
-    onAdvanceAmountChange={setAdvanceAmount}
-    onPaymentModeChange={setPaymentMode}
-    onTransactionIdChange={setTransactionId}
-    onSplitPaymentToggle={setSplitPayment}
-    onSecondAdvanceAmountChange={setSecondAdvanceAmount}
-    onSecondPaymentModeChange={setSecondPaymentMode}
-    onSecondTransactionIdChange={setSecondTransactionId}
-  />
-)}
+          {formType !== 'Estimate' && (
+            <PaymentSection
+              totalAmount={parseFloat(totalWithGST)}
+              advanceAmount={advanceAmount}
+              paymentMode={paymentMode}
+              transactionId={transactionId}
+              splitPayment={splitPayment}
+              secondAdvanceAmount={secondAdvanceAmount}
+              secondPaymentMode={secondPaymentMode}
+              secondTransactionId={secondTransactionId}
+              onAdvanceAmountChange={setAdvanceAmount}
+              onPaymentModeChange={setPaymentMode}
+              onTransactionIdChange={setTransactionId}
+              onSplitPaymentToggle={setSplitPayment}
+              onSecondAdvanceAmountChange={setSecondAdvanceAmount}
+              onSecondPaymentModeChange={setSecondPaymentMode}
+              onSecondTransactionIdChange={setSecondTransactionId}
+            />
+          )}
 
         </div>
 
         <button
-                    onClick={handleGenerateBill}
-                    className="w-full bg-[#149cd9] text-white text-xl font-extrabold py-3 rounded-lg hover:bg-[#5ab7e0]"
-                >
-                    Generate Bill
-                </button>
+          onClick={handleGenerateBill}
+          className="w-full bg-[#149cd9] text-white text-xl font-extrabold py-3 rounded-lg hover:bg-[#5ab7e0]"
+        >
+          Generate Bill
+        </button>
       </div>
     </div>
   );

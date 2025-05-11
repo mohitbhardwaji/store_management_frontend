@@ -7,10 +7,12 @@ export default defineConfig({
   plugins: [
     react(),
     tailwindcss(
-      {content: [
+      {
+        content: [
       "./index.html",
       "./src/**/*.{js,ts,jsx,tsx}"
-    ],}),
+    ],
+  }),
     
   ],
 })
