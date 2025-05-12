@@ -42,15 +42,24 @@ const PaymentSection = ({
 
       {/* First Payment Block */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-        <div>
-          <label className="block font-medium mb-1 text-sm text-gray-700">Advance Amount</label>
-          <input
-            type="number"
-            value={advanceAmount}
-            onChange={e => onAdvanceAmountChange(parseFloat(e.target.value) || 0)}
-            className="input-style"
-          />
-        </div>
+      <div>
+  <label className="block font-medium mb-1 text-sm text-gray-700">Advance Amount</label>
+  <input
+    type="text"
+    value={advanceAmount}
+    onChange={(e) => {
+      const value = e.target.value;
+      if (/^\d*\.?\d*$/.test(value)) {
+        onAdvanceAmountChange(value);
+      }
+    }}
+    onBlur={(e) => {
+      const value = e.target.value;
+      onAdvanceAmountChange(value === '' ? 0 : parseFloat(value));
+    }}
+    className="input-style"
+  />
+</div>
         <div>
           <label className="block font-medium mb-1 text-sm text-gray-700">Payment Mode</label>
           <select
@@ -82,16 +91,24 @@ const PaymentSection = ({
       {splitPayment && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           <div>
-            <label className="block font-medium mb-1 text-sm text-gray-700">Second Advance Amount</label>
-            <input
-              type="number"
-              value={secondAdvanceAmount}
-              onChange={e =>
-                onSecondAdvanceAmountChange(parseFloat(e.target.value) || 0)
-              }
-              className="input-style"
-            />
-          </div>
+  <label className="block font-medium mb-1 text-sm text-gray-700">Second Advance Amount</label>
+  <input
+    type="text"
+    value={secondAdvanceAmount}
+    onChange={(e) => {
+      const value = e.target.value;
+      if (/^\d*\.?\d*$/.test(value)) {
+        onSecondAdvanceAmountChange(value);
+      }
+    }}
+    onBlur={(e) => {
+      const value = e.target.value;
+      onSecondAdvanceAmountChange(value === '' ? 0 : parseFloat(value));
+    }}
+    className="input-style"
+  />
+</div>
+
           <div>
             <label className="block font-medium mb-1 text-sm text-gray-700">Second Payment Mode</label>
             <select

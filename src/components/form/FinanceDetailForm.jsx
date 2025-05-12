@@ -17,9 +17,7 @@ const FinanceDetailsForm = ({
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-6">
       {/* Financer Dropdown */}
       <div>
-        <label className="text-sm font-medium text-[#1EA0DC] mb-1 block">
-          Financer
-        </label>
+        <label className="text-sm font-medium text-[#1EA0DC] mb-1 block">Financer</label>
         <select
           className="input-style text-gray-500"
           value={selectedFinancer}
@@ -36,53 +34,81 @@ const FinanceDetailsForm = ({
 
       {/* Down Payment */}
       <div>
-        <label className="text-sm font-medium text-[#1EA0DC] mb-1 block">
-          Down Payment
-        </label>
+        <label className="text-sm font-medium text-[#1EA0DC] mb-1 block">Down Payment</label>
         <input
-          type="number"
+          type="text"
           className="input-style text-gray-500"
           value={downPayment}
-          onChange={(e) => onDownPaymentChange(e.target.value)}
+          onChange={(e) => {
+            const value = e.target.value;
+            if (/^\d*$/.test(value)) {
+              onDownPaymentChange(value);
+            }
+          }}
+          onBlur={(e) => {
+            const value = e.target.value;
+            onDownPaymentChange(value === '' ? 0 : parseInt(value));
+          }}
         />
       </div>
 
       {/* Tenure */}
       <div>
-        <label className="text-sm font-medium text-[#1EA0DC] mb-1 block">
-          Tenure (months)
-        </label>
+        <label className="text-sm font-medium text-[#1EA0DC] mb-1 block">Tenure (months)</label>
         <input
-          type="number"
+          type="text"
           className="input-style text-gray-500"
           value={tenure}
-          onChange={(e) => onTenureChange(e.target.value)}
+          onChange={(e) => {
+            const value = e.target.value;
+            if (/^\d*$/.test(value)) {
+              onTenureChange(value);
+            }
+          }}
+          onBlur={(e) => {
+            const value = e.target.value;
+            onTenureChange(value === '' ? 0 : parseInt(value));
+          }}
         />
       </div>
 
       {/* ROI */}
       <div>
-        <label className="text-sm font-medium text-[#1EA0DC] mb-1 block">
-          Rate of Interest (%)
-        </label>
+        <label className="text-sm font-medium text-[#1EA0DC] mb-1 block">Rate of Interest (%)</label>
         <input
-          type="number"
+          type="text"
           className="input-style text-gray-500"
           value={roi}
-          onChange={(e) => onROIChange(e.target.value)}
+          onChange={(e) => {
+            const value = e.target.value;
+            if (/^\d*\.?\d*$/.test(value)) {
+              onROIChange(value);
+            }
+          }}
+          onBlur={(e) => {
+            const value = e.target.value;
+            onROIChange(value === '' ? 0 : parseFloat(value));
+          }}
         />
       </div>
 
       {/* Discount */}
       <div>
-        <label className="text-sm font-medium text-[#1EA0DC] mb-1 block">
-          Discount (₹)
-        </label>
+        <label className="text-sm font-medium text-[#1EA0DC] mb-1 block">Discount (₹)</label>
         <input
-          type="number"
+          type="text"
           className="input-style text-gray-500"
           value={discount}
-          onChange={(e) => onDiscountChange(e.target.value)}
+          onChange={(e) => {
+            const value = e.target.value;
+            if (/^\d*\.?\d*$/.test(value)) {
+              onDiscountChange(value);
+            }
+          }}
+          onBlur={(e) => {
+            const value = e.target.value;
+            onDiscountChange(value === '' ? 0 : parseFloat(value));
+          }}
         />
       </div>
     </div>

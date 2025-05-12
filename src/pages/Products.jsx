@@ -246,12 +246,12 @@ export default function Products() {
           <td className="py-1 px-2">Rs. {product.product.rate}</td>
           <td className="py-1 px-2">{product.product.gst} %</td>
           <td className="py-1 px-2 flex gap-1">
-            <button
+            {/* <button
               onClick={() => handleEdit(product._id)}
               className="bg-indigo-400 hover:bg-indigo-500 text-white p-1 rounded-full"
             >
               <FiEye />
-            </button>
+            </button> */}
             <button
               onClick={() => handleOpenEditModal(product)}
               className="bg-indigo-400 hover:bg-indigo-500 text-white p-1 rounded-full"

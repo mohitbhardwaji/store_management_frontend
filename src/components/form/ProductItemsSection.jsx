@@ -49,27 +49,40 @@ const ProductItemsSection = ({ products, onProductChange, onAddProduct, onRemove
                 <div>
                   <label className="text-sm font-medium text-gray-700">Quantity</label>
                   <input
-                    type="number"
+                    type="text"
                     value={product.quantity}
-                    onChange={(e) =>
-                      onProductChange(index, 'quantity', parseInt(e.target.value) || 1)
-                    }
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      // Allow only digits
+                      if (/^\d*$/.test(value)) {
+                        onProductChange(index, 'quantity', value);
+                      }
+                    }}
+                    onBlur={(e) => {
+                      const value = e.target.value;
+                      onProductChange(index, 'quantity', value === '' ? 0 : parseInt(value));
+                    }}
                     className="w-full border border-gray-300 rounded p-2"
                   />
+
                 </div>
 
                 <div>
                   <label className="text-sm font-medium text-gray-700">Price</label>
                   <input
-                    type="number"
-                    value={product.customPrice || product.rate} // Default to rate if customPrice is not set
-                    onChange={(e) =>
-                      onProductChange(
-                        index,
-                        'customPrice',
-                        parseFloat(e.target.value) || product.rate
-                      ) // Only change customPrice, not rate
-                    }
+                    type="text"
+                    value={product.customPrice}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      // Allow only valid float input
+                      if (/^\d*\.?\d*$/.test(value)) {
+                        onProductChange(index, 'customPrice', value);
+                      }
+                    }}
+                    onBlur={(e) => {
+                      const value = e.target.value;
+                      onProductChange(index, 'customPrice', value === '' ? 0 : parseFloat(value));
+                    }}
                     className="w-full border border-gray-300 rounded p-2"
                   />
                 </div>
