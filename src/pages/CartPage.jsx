@@ -92,6 +92,21 @@ const CartPage = () => {
   }, [finance, downPayment, tenure, roi, discount]);
 
 
+  const handleSearchModel = async (index, value) => {
+    handleProductChange(index, 'modelNumber', value);
+
+    try {
+        const res = await axios.get(`${apiServerUrl}/stocks/searchStock?search=${value}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        setSearchModel(prev => ({ ...prev, [index]: res.data }));
+    } catch (err) {
+        toast.error(err.message)
+    }
+};
+
   const handleCustomerChange = (field, value) => {
     setCustomer(prev => ({
       ...prev,

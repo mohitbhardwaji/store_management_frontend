@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { apiServerUrl } from '../../constant/constants';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const ProductSearch = ({ onSelect }) => {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const fetchProducts = async (searchTerm) => {
     if (!searchTerm) return;
@@ -17,11 +20,15 @@ const ProductSearch = ({ onSelect }) => {
           'Authorization': `Bearer ${token}`,
         },
       });
-
+      if(response?.status == 401){
+        toast.error('Access token expired, Please Login again')
+        navigate('/login');
+      }
       const data = await response.json();
-      setResults(data); // Expects array from API
+      setResults(data); 
     } catch (error) {
-      console.error('Failed to fetch products:', error);
+      toast.error("Failed to load Products")
+
       setResults([]);
     } finally {
       setLoading(false);

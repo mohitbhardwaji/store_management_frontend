@@ -11,6 +11,7 @@ export class ToPrint extends Component {
   render() {
     const {
       _id,
+      serialNumber,
       formType,
       customerName,
       customerAddress,
@@ -29,7 +30,7 @@ export class ToPrint extends Component {
       payment1 = {},
       payment2 = {},
     } = this.props.billData || {};
-    const {priceAfterFinance,emiPerMonth} = this.props.financeData
+    const {priceAfterFinance,emiPerMonth} = this.props?.financeData || {}
     const calculateAmount = (products) => {
       let totalAmount = 0;
       let totalGST = 0;
@@ -70,6 +71,7 @@ export class ToPrint extends Component {
           </div>
 
 <div className='w-full text-right'>
+            <p><strong>Serial No:</strong> {serialNumber}</p>
 {formType !== 'Estimate'&&(
               <p><strong>GST No:</strong>23AESPJ5532J1ZA</p>
             )}
@@ -245,13 +247,13 @@ const CustomerOrder = () => {
         const bill = res.data.bills[0];
         setState(bill);
 
-       const payload = {
-        product_rate:bill.totalAmount,
-        downpayment:bill.finance_id.downpayment,
-          emiTenure:bill.finance_id.emiTenure,
-          roi:bill.finance_id.roi,
-          discount:bill.finance_id.discount
-       }
+      //  const payload = {
+      //   product_rate:bill.totalAmount,
+      //   downpayment:bill.finance_id.downpayment,
+      //     emiTenure:bill.finance_id.emiTenure,
+      //     roi:bill.finance_id.roi,
+      //     discount:bill.finance_id.discount
+      //  }
 
       
        if (bill.finance_id) {
@@ -281,12 +283,14 @@ const CustomerOrder = () => {
       }
      
       } catch (err) {
+        console.log("in cath block",err)
         if (err.response?.status === 401) {
           toast.error('Token Expired. Please login again.');
           navigate('/login');
         } else {
           toast.error('Failed to fetch invoice or finance details');
         }
+        
       } finally {
         setLoading(false);
       }
