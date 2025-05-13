@@ -38,6 +38,7 @@ export default function App() {
           <Route path="/dashboard" element={authenticated ? <Dashboard /> : <Navigate to="/login" />} />
           <Route path="/invoice" element={authenticated ? <InvoicePage /> : <Navigate to="/login" />} />
           <Route path="/invoice/:id" element={authenticated ? <InvoicePage /> : <Navigate to="/login" />} />
+          <Route path="/edit_product/:id" element={authenticated ? <EditProduct /> : <Navigate to="/login" />} />
           <Route path="/addNewStock" element={authenticated ? <AddStockPage /> : <Navigate to="/login" />} />
           <Route path="/orderBill" element={authenticated ? <OrderBillPage /> : <Navigate to="/login" />} />
           <Route path="/customerOrder/:billId" element={authenticated ? <CustomerOrder /> : <Navigate to="/login" />} />
