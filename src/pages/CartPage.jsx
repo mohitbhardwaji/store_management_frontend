@@ -173,12 +173,14 @@ const CartPage = () => {
         quantity: product.quantity || 1,
         price: product.rate || 0,
         customPrice: product.customPrice || 0,
+        s_number:product.s_number,
       })),
       totalAmount: parseFloat(totalWithGST),
       deliveryDate,
       salesperson,
       partialPayment: splitPayment,
       advanceAmount: totalAdvance,
+      isPaid: finance ? true : (totalWithGST - totalAdvance > 0 ? false : true),
       isFinance: finance,
       finance: finance
         ? {
@@ -265,7 +267,7 @@ const CartPage = () => {
 
 
   return (
-    <div className="bg-gray-100 min-h-screen py-10 px-4 sm:px-10 pb-5">
+    <div className="bg-gray-100 min-h-screen py-10  sm:px-10 pb-5">
       <div className="max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow-xl">
         <div className="p-6">
           <h1 className="text-4xl font-bold p-5 text-[#0D8BC5] mb-6 text-center bg-gray-100">
@@ -336,11 +338,13 @@ const CartPage = () => {
                 tenure={tenure}
                 roi={roi}
                 discount={discount}
+                products={products}
                 onFinancerChange={setSelectedFinancer}
                 onDownPaymentChange={setDownPayment}
                 onTenureChange={setTenure}
                 onROIChange={setROI}
                 onDiscountChange={setDiscount}
+                onProductsChange={setProducts}
               />
             </div>
           )}

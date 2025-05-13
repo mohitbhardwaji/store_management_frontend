@@ -4,16 +4,17 @@ import ProductSearch from './ProductSearch';
 const ProductItemsSection = ({ products, onProductChange, onAddProduct, onRemoveProduct }) => {
   return (
     <div className="p-4 rounded-lg shadow-sm mb-6">
-      <div className="flex justify-between items-center mb-5">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-5">
         <h2 className="text-xl font-semibold text-[#0D8BC5]">Products</h2>
         <button
           type="button"
           onClick={onAddProduct}
-          className="px-4 py-2 bg-blue-500 text-white rounded-md shadow"
+          className="px-4 py-2 bg-[#0D8BC5] hover:bg-[#0a6e98] text-white rounded-md shadow w-full sm:w-auto"
         >
           + Add Product
         </button>
       </div>
+
 
       {products.map((product, index) => (
         <div key={index} className="relative rounded-lg p-4 mb-4 shadow-sm bg-gray-50">

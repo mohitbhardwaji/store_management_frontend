@@ -16,11 +16,11 @@ export default function Billing() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const windowSize = 5;
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
     const fetchBills = async () => {
       setLoading(true);
-      const token = localStorage.getItem('token');
       const delay = new Promise((resolve) => setTimeout(resolve, 500));
 
       try {
@@ -38,7 +38,7 @@ export default function Billing() {
         setIsData(res.data.totalBillsInspiteOfFormType)
         setTotalPages(res.data.totalPages || 1);
       } catch (err) {
-        if(err.response?.status === 401 ){
+        if (err.response?.status === 401) {
           toast.error('Token Expired please login again');
           navigate('/login');
         } else {
@@ -78,6 +78,33 @@ export default function Billing() {
       </div>
     );
   }
+
+  const handleTogglePaid = async (billId, newStatus) => {
+    try {
+      await axios.patch(
+        `${apiServerUrl}/bill/${billId}/paid-status`,
+        { isPaid: newStatus },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // Update local state
+      setBills((prev) =>
+        prev.map((bill) =>
+          bill._id === billId ? { ...bill, isPaid: newStatus } : bill
+        )
+      );
+
+      toast.success(`Marked as ${newStatus ? 'Paid' : 'Unpaid'}`);
+    } catch (error) {
+      toast.error('Failed to update bill status.');
+    }
+  };
+
 
   return (
     <div className="">
@@ -120,6 +147,7 @@ export default function Billing() {
                   <th className="p-3 text-left font-semibold">Date</th>
                   <th className="p-3 text-left font-semibold">Total Items</th>
                   <th className="p-3 text-left font-semibold">Total Amount</th>
+                  <th className="p-3 text-left font-semibold">Mark as Paid</th>
                   <th className="p-3 text-left font-semibold">Action</th>
                 </tr>
               </thead>
@@ -127,11 +155,26 @@ export default function Billing() {
                 {bills.map((bill, index) => (
                   <tr key={bill._id} className={index % 2 === 0 ? 'bg-white' : 'bg-sky-50'}>
                     <td className="p-3">{bill.customerName}</td>
-                    <td className="p-3">{bill.customerPhone}</td>
-                    <td className="p-3">{bill.formType}</td>
-                    <td className="p-3">{new Date(bill.createdAt).toLocaleDateString()}</td>
-                    <td className="p-3">{bill.products.length}</td>
-                    <td className="p-3">₹{bill.totalAmount.toFixed(2)}</td>
+                    <td className="p-3  text-center">{bill.customerPhone}</td>
+                    <td className="p-3  text-center">{bill.formType}</td>
+                    <td className="p-3  text-center">{new Date(bill.createdAt).toLocaleDateString()}</td>
+                    <td className="p-3  text-center">{bill.products.length}</td>
+                    <td className="p-3  text-center">₹{bill.totalAmount.toFixed(2)}</td>
+                    <td className="p-3 text-center">
+                      <button
+                        onClick={() => handleTogglePaid(bill._id, !bill.isPaid)}
+                        className={`w-12 h-6 rounded-full transition duration-300 ${bill.isPaid || bill.finance_id ? 'bg-green-400' : 'bg-red-300'
+                          }`}
+                        title={bill.isPaid ? 'Marked as Paid' : 'Mark as Paid'}
+                      >
+                        <div
+                          className={`w-4 h-4 bg-white rounded-full transform transition-transform duration-300 ${bill.isPaid || bill.finance_id ? 'translate-x-7' : 'translate-x-1'
+                            }`}
+                        />
+                      </button>
+                    </td>
+
+
                     <td className="p-3">
                       <button
                         onClick={() => navigate(`/customerOrder/${bill._id}`)}
@@ -168,11 +211,10 @@ export default function Billing() {
               <button
                 key={page}
                 onClick={() => handlePageChange(page)}
-                className={`px-3 py-1 rounded-full ${
-                  currentPage === page
-                    ? 'bg-blue-400 text-white'
-                    : 'bg-white text-gray-700 hover:bg-blue-100'
-                }`}
+                className={`px-3 py-1 rounded-full ${currentPage === page
+                  ? 'bg-blue-400 text-white'
+                  : 'bg-white text-gray-700 hover:bg-blue-100'
+                  }`}
               >
                 {page}
               </button>
@@ -187,12 +229,12 @@ export default function Billing() {
             </button>
           </div>
         </div>
-       ) : (
+      ) : (
         <div className="flex flex-col items-center justify-center h-[60vh] text-gray-500">
           <img src={empty} alt="No bills" className="w-40 mb-4" />
           <p className="text-lg">No bills to show right now.</p>
         </div>
-      )} 
+      )}
     </div>
   );
 }

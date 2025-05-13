@@ -65,7 +65,7 @@ export class ToPrint extends Component {
           <img src={logo} alt="Company Logo" className="h-15 w-auto " />
         </div>
 
-        <div className="p-2 text-xs">
+        <div className="p-2 text-[10px]">
           <div className="mb-1 text-base text-center">
             <p className="text-base font-semibold ">{formType}</p>
           </div>
@@ -78,7 +78,7 @@ export class ToPrint extends Component {
             <p><strong>Sales Executive:</strong> {salesperson.name}</p>
             <p><strong>Sales Contact:</strong> {salesperson.mobileNumber}</p>
 </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 print:grid-cols-2 text-xs ">
+          <div className="grid grid-cols-1 md:grid-cols-2 print:grid-cols-2 text-[10px] ">
             
             <p><strong>Date:</strong> {new Date(createdAt).toLocaleDateString()}</p>
             <p><strong>Name:</strong> {customerName}</p>
@@ -99,11 +99,11 @@ export class ToPrint extends Component {
            
           </div>
 
-          <div className="text-xs mb-2">
+          <div className="mb-2">
             <p><strong>Address:</strong> {customerAddress}</p>
           </div>
 
-          <table className="w-full border-collapse border border-gray-300 mb-1 text-xs">
+          <table className="w-full border-collapse border border-gray-300 mb-1 text-[10px]">
             <thead className="bg-gray-100">
               <tr>
                 <th className="border px-2 py-1">SNo.</th>
@@ -119,9 +119,17 @@ export class ToPrint extends Component {
                 <td className={`${item ? 'border' : 'border-l'} px-2  text-center`}>
                   {item ? i + 1 : <div className="h-4" />}
                 </td>
-                <td className={`${item ? 'border' : ''} px-2  text-left`}>
-                  {item?.productNumber || <div className="h-4" />}
-                </td>
+                <td className={`${item ? 'border' : ''} px-2 text-left`}>
+  {item?.productNumber}
+  
+  {item?.s_number?.length > 0 && (
+    <div className=" pl-4">
+      {item.s_number.map((serial, index) => (
+        <div key={index}>S No: {serial}</div>
+      ))}
+    </div>
+  )}
+</td>
                 <td className={`${item ? 'border' : ''} border  px-2  text-center`}>
                   {item ? `₹${(item.customPrice - (item.customPrice * item.gst / 100)).toFixed(2)}` : <div className="h-4" />}
                 </td>
@@ -159,7 +167,7 @@ export class ToPrint extends Component {
           <div className="grid grid-cols-1 md:grid-cols-2 print:grid-cols-2 gap-0">
   {/* Payment Details */}
   {formType !== 'Estimate' && (partialPayment || payment1?.amount || (partialPayment && payment2?.amount)) && (
-  <div className="text-xs">
+  <div className="text-[10px]">
     {partialPayment && (
       <>
         <p><strong>Advance Paid:</strong> ₹{advanceAmount.toFixed(2)}</p>
@@ -198,7 +206,7 @@ export class ToPrint extends Component {
 
 
   {finance_id?.financerName && (
-    <div className="text-xs ">
+    <div className="text-[10px]">
       <p><strong>Financer Name:</strong> {finance_id.financerName}</p>
       <p><strong>Downpayment:</strong> ₹{finance_id.downpayment}</p>
       <p><strong>EMI Tenure:</strong> {finance_id.emiTenure} months</p>
@@ -211,7 +219,7 @@ export class ToPrint extends Component {
 </div>
 
 {/* Signature slightly above bottom */}
-<div className="absolute bottom-2 right-0 text-xs text-right pr-2">
+<div className="absolute bottom-2 right-0 text-[10px] text-right pr-2">
   Authorized Signature
 </div>  
 
@@ -246,15 +254,6 @@ const CustomerOrder = () => {
 
         const bill = res.data.bills[0];
         setState(bill);
-
-      //  const payload = {
-      //   product_rate:bill.totalAmount,
-      //   downpayment:bill.finance_id.downpayment,
-      //     emiTenure:bill.finance_id.emiTenure,
-      //     roi:bill.finance_id.roi,
-      //     discount:bill.finance_id.discount
-      //  }
-
       
        if (bill.finance_id) {
         const payload = {
