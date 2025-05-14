@@ -65,7 +65,7 @@ const PDFGenerator = ({
   const generatePDF = () => {
     console.log("button clicked");
     const input = contentRef.current;
-
+  
     // Set fixed dimensions for A5
     input.style.width = "420px"; // A5 width in pixels
     input.style.Height = "595px"; // A5 height in pixels
@@ -78,14 +78,24 @@ const PDFGenerator = ({
       day: '2-digit',
       hour12: true,
     });
+  
     html2canvas(input, { scale: 2 }).then((canvas) => {
       const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF("p", "mm", "a5"); // A5 page size
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-
+  
       pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-      pdf.save(`CoolZone-Bill-${date}.pdf`);
+  
+      // Open the PDF in a new tab and trigger print
+      const pdfBlob = pdf.output("blob");
+      const pdfURL = URL.createObjectURL(pdfBlob);
+      const printWindow = window.open(pdfURL);
+      if (printWindow) {
+        printWindow.onload = () => {
+          printWindow.print();
+        };
+      }
     });
   };
 
