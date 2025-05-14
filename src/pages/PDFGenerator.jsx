@@ -69,15 +69,6 @@ const PDFGenerator = ({
     // Set fixed dimensions for A5
     input.style.width = "420px"; // A5 width in pixels
     input.style.Height = "595px"; // A5 height in pixels
-    const date = new Date().toLocaleTimeString('en-IN', {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour12: true,
-    });
   
     html2canvas(input, { scale: 2 }).then((canvas) => {
       const imgData = canvas.toDataURL("image/png");
@@ -87,13 +78,45 @@ const PDFGenerator = ({
   
       pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
   
-      // Open the PDF in a new tab and trigger print
+      // Generate the PDF as a Blob
       const pdfBlob = pdf.output("blob");
       const pdfURL = URL.createObjectURL(pdfBlob);
-      const printWindow = window.open(pdfURL);
-      if (printWindow) {
-        printWindow.onload = () => {
-          printWindow.print();
+  
+      // Detect screen resolution
+      const screenWidth = window.innerWidth;
+  
+      if (screenWidth > 768) {
+        // For larger screens (e.g., laptops/desktops)
+        const printWindow = window.open(pdfURL, "_blank");
+        if (printWindow) {
+          printWindow.onload = () => {
+            printWindow.print();
+          };
+        } else {
+          console.error("Failed to open print window. Pop-ups might be blocked.");
+        }
+      } else {
+        // For smaller screens (e.g., tablets/mobiles)
+        const iframe = document.createElement("iframe");
+        iframe.style.position = "absolute";
+        iframe.style.top = "0";
+        iframe.style.left = "0";
+        iframe.style.width = "100%";
+        iframe.style.height = "100%";
+        iframe.style.border = "none";
+  
+        // Set the iframe source to the PDF Blob
+        iframe.src = pdfURL;
+  
+        // Append the iframe to the body
+        document.body.appendChild(iframe);
+  
+        // Trigger the print dialog once the iframe is loaded
+        iframe.onload = () => {
+          iframe.contentWindow.print();
+  
+          // Remove the iframe after printing
+          iframe.remove();
         };
       }
     });
