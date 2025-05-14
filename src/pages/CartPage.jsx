@@ -35,6 +35,7 @@ const CartPage = () => {
   const [financeTotal, setFinanceTotal] = useState();
   const totalAdvance = advanceAmount + secondAdvanceAmount
   const [selectedSalesPersonId, setSelectedSalesPersonId] = useState('');
+  const [fileCharge, setFileCharge] = useState(0);
 
   const calculateAmount = () => {
     let totalAmount = 0;
@@ -159,6 +160,28 @@ const CartPage = () => {
 
 
   const handleGenerateBill = async () => {
+    
+    if (!customer.name || !customer.number || !customer.address) {
+      toast.error("Please fill in all customer details (Name, Phone Number, and Address).");
+      return;
+    }
+  
+    if (!deliveryDate) {
+      toast.error("Please select a delivery date.");
+      return;
+    }
+  
+    if (!salesperson) {
+      toast.error("Please select a salesperson.");
+      return;
+    }
+  
+    if (products.length === 0 || products.some(product => !product.productName || product.quantity <= 0)) {
+      toast.error("Please add at least one valid product with a name and quantity greater than 0.");
+      return;
+    }
+  
+
     const payload = {
       formType,
       customerName: customer.name,
@@ -190,6 +213,7 @@ const CartPage = () => {
           roi: parseFloat(roi) || 0,
           discount: parseFloat(discount) || 0,
           priceAfterFinance: parseFloat(totalWithGST) - parseFloat(discount || 0),
+          file_charge: parseFloat(fileCharge) || 0,
         }
         : null,
 
@@ -262,8 +286,6 @@ const CartPage = () => {
       throw error;
     }
   };
-
-
 
 
   return (
@@ -339,12 +361,14 @@ const CartPage = () => {
                 roi={roi}
                 discount={discount}
                 products={products}
+                fileCharge={fileCharge}
                 onFinancerChange={setSelectedFinancer}
                 onDownPaymentChange={setDownPayment}
                 onTenureChange={setTenure}
                 onROIChange={setROI}
                 onDiscountChange={setDiscount}
                 onProductsChange={setProducts}
+                onFileChargeChange={setFileCharge}
               />
             </div>
           )}

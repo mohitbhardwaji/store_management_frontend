@@ -8,12 +8,14 @@ const FinanceDetailsForm = ({
   roi,
   discount,
   products = [],
+  fileCharge,
   onFinancerChange,
   onDownPaymentChange,
   onTenureChange,
   onROIChange,
   onDiscountChange,
   onProductsChange,
+  onFileChargeChange,
 }) => {
   const handleAddSerialNumber = (productIndex) => {
     const updatedProducts = products.map((product, idx) => {
@@ -142,6 +144,26 @@ const FinanceDetailsForm = ({
             onBlur={(e) => {
               const value = e.target.value;
               onTenureChange(value === '' ? 0 : parseInt(value));
+            }}
+          />
+        </div>
+
+        {/* File Charge */}
+        <div>
+          <label className="text-sm font-medium text-[#1EA0DC] mb-1 block">File Charge</label>
+          <input
+            type="text"
+            className="input-style text-gray-500"
+            value={fileCharge}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (/^\d*$/.test(value)) {
+                onFileChargeChange(value);
+              }
+            }}
+            onBlur={(e) => {
+              const value = e.target.value;
+              onFileChargeChange(value === '' ? 0 : parseInt(value));
             }}
           />
         </div>

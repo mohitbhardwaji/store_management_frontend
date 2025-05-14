@@ -17,6 +17,8 @@ export default function Billing() {
   const navigate = useNavigate();
   const windowSize = 5;
   const token = localStorage.getItem('token');
+  const data = localStorage.getItem('person');
+  const userRole = data ? JSON.parse(data).role : 'sales';
 
   useEffect(() => {
     const fetchBills = async () => {
@@ -126,13 +128,6 @@ export default function Billing() {
                 <option value="Invoice">Invoice</option>
                 <option value="Estimate">Estimate</option>
               </select>
-
-              <button
-                className="ml-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                onClick={() => toast.info(`Showing results for ${formType}`)}
-              >
-                Filter
-              </button>
             </div>
           </div>
 
@@ -162,14 +157,27 @@ export default function Billing() {
                     <td className="p-3  text-center">₹{bill.totalAmount.toFixed(2)}</td>
                     <td className="p-3 text-center">
                       <button
-                        onClick={() => handleTogglePaid(bill._id, !bill.isPaid)}
-                        className={`w-12 h-6 rounded-full transition duration-300 ${bill.isPaid || bill.finance_id ? 'bg-green-400' : 'bg-red-300'
-                          }`}
-                        title={bill.isPaid ? 'Marked as Paid' : 'Mark as Paid'}
+                        onClick={() => {
+                          if (!bill.isPaid && userRole !== 'sales') {
+                            handleTogglePaid(bill._id, true);
+                          }
+                        }}
+                        className={`w-12 h-6 rounded-full transition duration-300 ${
+                          bill.isPaid || bill.finance_id ? 'bg-green-400' : 'bg-red-300'
+                        }`}
+                        title={
+                          bill.isPaid
+                            ? 'Marked as Paid'
+                            : userRole === 'sales'
+                            ? 'Sales role cannot mark as paid'
+                            : 'Mark as Paid'
+                        }
+                        disabled={bill.isPaid || userRole === 'sales'}
                       >
                         <div
-                          className={`w-4 h-4 bg-white rounded-full transform transition-transform duration-300 ${bill.isPaid || bill.finance_id ? 'translate-x-7' : 'translate-x-1'
-                            }`}
+                          className={`w-4 h-4 bg-white rounded-full transform transition-transform duration-300 ${
+                            bill.isPaid || bill.finance_id ? 'translate-x-7' : 'translate-x-1'
+                          }`}
                         />
                       </button>
                     </td>

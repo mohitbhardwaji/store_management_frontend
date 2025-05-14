@@ -271,8 +271,8 @@ const PDFGenerator = ({
       <p><strong>Downpayment:</strong> ₹{finance_id.downpayment}</p>
       <p><strong>EMI Tenure:</strong> {finance_id.emiTenure} months</p>
       <p><strong>EMI Amount:</strong> ₹{emiPerMonth} /month</p>
-      <p><strong>Rate of Interest:</strong> {finance_id.roi}%</p>
-      <p><strong>Price After Finance:</strong> ₹{(Number(priceAfterFinance)+Number(finance_id.downpayment)).toFixed(2)}</p>
+      <p><strong>File Charge:</strong> ₹{finance_id?.file_charge}</p>
+      <p><strong>Price After Finance:</strong> ₹{(Number(priceAfterFinance)+Number(finance_id.downpayment) + Number(finance_id?.file_charge)).toFixed(2)}</p>
     </div>
   )}
   

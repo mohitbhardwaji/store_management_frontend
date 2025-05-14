@@ -3,9 +3,12 @@ import React from 'react';
 const CustomerDetail = ({ customer, onChange }) => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-      <div>
-        <label htmlFor="customerName" className="text-sm font-medium text-[#1EA0DC] mb-1 block">
-          Customer Name 
+      <div className="flex flex-col">
+        <label
+          htmlFor="customerName"
+          className="text-sm font-medium text-[#1EA0DC] mb-1"
+        >
+          Customer Name
         </label>
         <input
           id="customerName"
@@ -17,8 +20,11 @@ const CustomerDetail = ({ customer, onChange }) => {
         />
       </div>
 
-      <div>
-        <label htmlFor="phoneNumber" className="text-sm font-medium text-[#1EA0DC] mb-1 block">
+      <div className="flex flex-col">
+        <label
+          htmlFor="phoneNumber"
+          className="text-sm font-medium text-[#1EA0DC] mb-1"
+        >
           Phone Number
         </label>
         <input
@@ -31,8 +37,11 @@ const CustomerDetail = ({ customer, onChange }) => {
         />
       </div>
 
-      <div>
-        <label htmlFor="altNumber" className="text-sm font-medium text-[#1EA0DC] mb-1 block">
+      <div className="flex flex-col">
+        <label
+          htmlFor="altNumber"
+          className="text-sm font-medium text-[#1EA0DC] mb-1"
+        >
           Alternate Number
         </label>
         <input
@@ -45,8 +54,11 @@ const CustomerDetail = ({ customer, onChange }) => {
         />
       </div>
 
-      <div className="sm:col-span-3">
-        <label htmlFor="address" className="text-sm font-medium text-[#1EA0DC] mb-1 block">
+      <div className="flex flex-col sm:col-span-3">
+        <label
+          htmlFor="address"
+          className="text-sm font-medium text-[#1EA0DC] mb-1"
+        >
           Address
         </label>
         <input
