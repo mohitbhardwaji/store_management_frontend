@@ -121,3 +121,11 @@ button:focus-visible {
 .toggle-checkbox:checked::before {
   transform: translateX(20px);
 }
+
+.invoice-container {
+  width: 420px; /* A5 width */
+  height: 595px; /* A5 height */
+  margin: 0 auto; /* Center the content */
+  overflow: hidden; /* Prevent content overflow */
+  font-size: 10px; /* Adjust font size for smaller dimensions */
+}
