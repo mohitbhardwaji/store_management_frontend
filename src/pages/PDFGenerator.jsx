@@ -69,7 +69,15 @@ const PDFGenerator = ({
     // Set fixed dimensions for A5
     input.style.width = "420px"; // A5 width in pixels
     input.style.Height = "595px"; // A5 height in pixels
-
+    const date = new Date().toLocaleTimeString('en-IN', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour12: true,
+    });
     html2canvas(input, { scale: 2 }).then((canvas) => {
       const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF("p", "mm", "a5"); // A5 page size
@@ -77,13 +85,13 @@ const PDFGenerator = ({
       const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
       pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-      pdf.save("download.pdf");
+      pdf.save(`CoolZone-Bill-${date}.pdf`);
     });
   };
 
   return (
     <div className="p-4">
-    <div ref={contentRef} className="invoice-container border pb-1 bg-white text-black" style={{ borderColor: "#d1d5db" }}>
+    <div ref={contentRef} className="invoice-container border pb-1 bg-white text-black" >
       <div className="flex justify-center p-1" style={{ backgroundColor: "#94989a" }} > 
         <img src={logo} alt="Company Logo" className="h-15 w-auto" />
       </div>
@@ -213,7 +221,7 @@ const PDFGenerator = ({
         )}
 
         {(payment1?.amount || 0) + (partialPayment ? (payment2?.amount || 0) : 0) < calTotalWithGST && (
-          <p className="font-semibold text-red-600">
+          <p className="font-semibold ">
             Remaining Due: ₹{(calTotalWithGST - ((payment1?.amount || 0) + (partialPayment ? (payment2?.amount || 0) : 0))).toFixed(2)}
           </p>
         )}
@@ -238,7 +246,7 @@ const PDFGenerator = ({
 </div>
 
 {/* Signature slightly above bottom */}
-<div className="right-0 text-[8px] text-right mt-6 mr-2">
+<div className="right-0 text-[8px] text-right mt-2 mr-2">
   Authorized Signature
 </div>  
 
