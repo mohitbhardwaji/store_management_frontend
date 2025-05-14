@@ -5,7 +5,6 @@ import logo from '../assets/coolzone.png'
 import axios from 'axios';
 import { apiServerUrl } from '../constant/constants';
 import { toast } from 'react-toastify';
-import PDFGenerator from './PDFGenerator';
 // import { calculateFinanceDetails } from '../constant/commonFunction';
 
 export class ToPrint extends Component {
@@ -300,15 +299,14 @@ const CustomerOrder = () => {
   }, [billId]);
 
   const handlePrint = useReactToPrint({ contentRef });
-  
 
   if (loading) return <p className="text-center mt-10">Loading...</p>;
   if (!state) return <p className="text-center mt-10">No bill data available</p>;
   console.log(state)
   return (
     <div className="p-8 max-w-4xl mx-auto bg-white text-black">
-      {/* <ToPrint innerRef={contentRef} billData={state} financeData={financeData} /> */}
-      <PDFGenerator billData={state} financeData={financeData} />
+      <ToPrint innerRef={contentRef} billData={state} financeData={financeData} />
+
       <div className="text-center mt-10 print-button">
         <button
           onClick={handlePrint}
