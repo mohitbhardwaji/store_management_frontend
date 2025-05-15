@@ -120,7 +120,7 @@ button:focus-visible {
 }
 
 .invoice-container {
-  width: 420px; /* A5 width */
+  width: 576px; /* A5 width */
   height: 595px; /* A5 height */
   margin: 0 auto; /* Center the content */
   overflow: hidden; /* Prevent content overflow */

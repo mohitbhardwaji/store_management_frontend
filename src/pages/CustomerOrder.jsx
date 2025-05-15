@@ -307,16 +307,7 @@ const CustomerOrder = () => {
   console.log(state)
   return (
     <div className="p-8 max-w-4xl mx-auto bg-white text-black">
-      {/* <ToPrint innerRef={contentRef} billData={state} financeData={financeData} /> */}
       <PDFGenerator billData={state} financeData={financeData} />
-      <div className="text-center mt-10 print-button">
-        <button
-          onClick={handlePrint}
-          className="bg-[#149cd9] hover:bg-[#5ab7e0] text-white px-6 py-2 rounded text-sm"
-        >
-          Print Order Bill
-        </button>
-      </div>
     </div>
   );
 };
