@@ -224,7 +224,7 @@ const PDFGenerator = ({
                         </tbody>
                     </table>
                     <div className="relative min-h-[200px]"> {/* Adjust height as needed */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 print:grid-cols-2 gap-0">
+                    <div className="grid grid-cols-1 md:grid-cols-2 print:grid-cols-2 gap-0">
                             {/* Payment Details */}
                             {formType !== 'Estimate' && (partialPayment || payment1?.amount || (partialPayment && payment2?.amount)) && (
                                 <div className="text-[8px]">
@@ -253,9 +253,14 @@ const PDFGenerator = ({
                                                 </p>
                                             )}
 
-                                            {(payment1?.amount || 0) + (partialPayment ? (payment2?.amount || 0) : 0) < calTotalWithGST && (
+                                            {!finance_id && ((payment1?.amount || 0) + (partialPayment ? (payment2?.amount || 0) : 0) < calTotalWithGST) && (
                                                 <p className="font-semibold ">
                                                     Remaining Due: ₹{(calTotalWithGST - ((payment1?.amount || 0) + (partialPayment ? (payment2?.amount || 0) : 0))).toFixed(2)}
+                                                </p>
+                                            )}
+                                            { finance_id && (
+                                                <p className="font-semibold ">
+                                                    Remaining Due: ₹{(((finance_id?.downpayment || 0)+(finance_id?.file_charge || 0)) - ((payment1?.amount || 0) + (partialPayment ? (payment2?.amount || 0) : 0))).toFixed(2)}
                                                 </p>
                                             )}
                                         </>
