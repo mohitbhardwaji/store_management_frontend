@@ -129,7 +129,7 @@ const PDFGenerator = ({
                     <img src={logo} alt="Company Logo" className="h-15 w-auto" />
                 </div>
 
-                <div className="p-2 text-[8px] mt-12">
+                <div className="p-2 text-[8px] ">
                     <div className=" text-base text-center">
                         <p className="text-base font-semibold">{formType}</p>
                     </div>
