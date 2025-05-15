@@ -124,7 +124,7 @@ const PDFGenerator = ({
 
     return (
         <div className="p-4">
-            <div ref={contentRef} className="invoice-container  pb-1 bg-white text-black" >
+            <div ref={contentRef} className="invoice-container  mt-3 mb-3 pb-1 bg-white text-black" >
                 <div className="flex justify-center p-1" style={{ backgroundColor: "#94989a" }} >
                     <img src={logo} alt="Company Logo" className="h-15 w-auto" />
                 </div>
