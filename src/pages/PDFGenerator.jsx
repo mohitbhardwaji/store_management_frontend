@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import logo from '../assets/coolzone.png'
@@ -59,10 +59,17 @@ const PDFGenerator = ({
     const { calTotalwithoutAmount, calTotalGST, calTotalWithGST } = calculateAmount(products);
 
 
-
-
-
-    const generatePDF = () => {
+const remainingDue = useMemo(() => {
+    if (!finance_id.financerName) {
+        return (
+            calTotalWithGST -
+            ((payment1?.amount || 0) + (partialPayment ? (payment2?.amount || 0) : 0))
+        ).toFixed(2);
+    }
+    return null;
+}, [calTotalWithGST, payment1, payment2, partialPayment, finance_id]);
+console.log("remainingDue:", remainingDue);
+const generatePDF = () => {
         console.log("button clicked");
         const input = contentRef.current;
 
@@ -191,40 +198,61 @@ const PDFGenerator = ({
                                             </div>
                                         )}
                                     </td>
-                                    <td className={`${item ? 'py-1' : ''} border-l border-b px-2 text-center`} >
-                                        {item ? `₹${(item.customPrice - (item.customPrice * item.gst / 100)).toFixed(2)}` : <div className="h-4" />}
+                                    <td className={`${item ? 'py-1' : ''} border-l border-b px-2 text-center`}>
+                                        {item
+                                            ? formType === 'Invoice'
+                                                ? `₹${(item.customPrice - (item.customPrice * item.gst / 100)).toFixed(2)}`
+                                                : `₹${item.customPrice.toFixed(2)}`
+                                            : <div className="h-4" />}
                                     </td>
-                                    <td className={`${item ? ' py-1' : ''} border-l border-b px-2 text-center`}  >
-                                        {item?.quantity || <div className="h-4" />}
+                                    <td className={`${item ? 'py-1' : ''} border-l border-b px-2 text-center`}>
+                                        {item ? item.quantity : <div className="h-4" />}
                                     </td>
-                                    <td className={`${item ? 'py-1' : ''} border-l border-b border-r px-2 text-center`}  >
-                                        {item ? `₹${((item.customPrice - (item.customPrice * item.gst / 100)) * item.quantity).toFixed(2)}` : <div className="h-4" />}
+                                    <td className={`${item ? 'py-1' : ''} border-l border-b border-r px-2 text-center`}>
+                                        {item
+                                            ? formType === 'Invoice'
+                                                ? `₹${((item.customPrice - (item.customPrice * item.gst / 100)) * item.quantity).toFixed(2)}`
+                                                : `₹${(item.customPrice * item.quantity).toFixed(2)}`
+                                            : <div className="h-4" />}
                                     </td>
                                 </tr>
                             ))}
+                            {formType == 'Invoice' ? (
+                                <>
+                                    <tr className="font-semibold">
+                                        <td colSpan="4" className="border px-2 text-right py-1"  >Subtotal (Before GST)</td>
+                                        <td className="border px-2 text-center py-1 "  >₹{calTotalwithoutAmount.toFixed(2)}</td>
+                                    </tr>
+                                    <tr className="font-semibold">
+                                        <td colSpan="4" className="border px-2  text-right py-1"  >CGST</td>
+                                        <td className="border px-2 text-center py-1"  >₹{(calTotalGST.toFixed(2) / 2)}</td>
+                                    </tr>
+                                    <tr className="font-semibold">
+                                        <td colSpan="4" className="border px-2 text-right py-1"  >SGST</td>
+                                        <td className="border px-2 text-center py-1"  >₹{(calTotalGST.toFixed(2) / 2)}</td>
+                                    </tr>
+                                    <tr className="font-bold">
+                                        <td colSpan="4" className="border px-2 text-right py-1"  >Total Amount (Including GST)</td>
+                                        <td className="border px-2 text-center py-1"  >
+                                            ₹{calTotalWithGST.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                                        </td>
+                                    </tr>
+                                </>
+                            ) : (
+                                <>
+                                    <tr className="font-bold">
+                                        <td colSpan="4" className="border px-2 text-right py-1"  >Total Amount </td>
+                                        <td className="border px-2 text-center py-1"  >
+                                            ₹{calTotalWithGST.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                                        </td>
+                                    </tr>
+                                </>
+                            )}
 
-                            <tr className="font-semibold">
-                                <td colSpan="4" className="border px-2 text-right py-1"  >Subtotal (Before GST)</td>
-                                <td className="border px-2 text-center py-1 "  >₹{calTotalwithoutAmount.toFixed(2)}</td>
-                            </tr>
-                            <tr className="font-semibold">
-                                <td colSpan="4" className="border px-2  text-right py-1"  >CGST</td>
-                                <td className="border px-2 text-center py-1"  >₹{(calTotalGST.toFixed(2) / 2)}</td>
-                            </tr>
-                            <tr className="font-semibold">
-                                <td colSpan="4" className="border px-2 text-right py-1"  >SGST</td>
-                                <td className="border px-2 text-center py-1"  >₹{(calTotalGST.toFixed(2) / 2)}</td>
-                            </tr>
-                            <tr className="font-bold">
-                                <td colSpan="4" className="border px-2 text-right py-1"  >Total Amount (Including GST)</td>
-                                <td className="border px-2 text-center py-1"  >
-                                    ₹{calTotalWithGST.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                                </td>
-                            </tr>
                         </tbody>
                     </table>
                     <div className="relative min-h-[200px]"> {/* Adjust height as needed */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 print:grid-cols-2 gap-0">
+                        <div className="grid grid-cols-1 md:grid-cols-2 print:grid-cols-2 gap-0">
                             {/* Payment Details */}
                             {formType !== 'Estimate' && (partialPayment || payment1?.amount || (partialPayment && payment2?.amount)) && (
                                 <div className="text-[8px]">
@@ -253,22 +281,18 @@ const PDFGenerator = ({
                                                 </p>
                                             )}
 
-                                            {!finance_id && ((payment1?.amount || 0) + (partialPayment ? (payment2?.amount || 0) : 0) < calTotalWithGST) && (
+{!finance_id.financerName && ((payment1?.amount || 0) + (partialPayment ? (payment2?.amount || 0) : 0) < calTotalWithGST) && (
+    <p className="font-semibold">Remaining Due: ₹{remainingDue}</p>
+)}
+                                            {finance_id.financerName && (
                                                 <p className="font-semibold ">
-                                                    Remaining Due: ₹{(calTotalWithGST - ((payment1?.amount || 0) + (partialPayment ? (payment2?.amount || 0) : 0))).toFixed(2)}
-                                                </p>
-                                            )}
-                                            { finance_id && (
-                                                <p className="font-semibold ">
-                                                    Remaining Due: ₹{(((finance_id?.downpayment || 0)+(finance_id?.file_charge || 0)) - ((payment1?.amount || 0) + (partialPayment ? (payment2?.amount || 0) : 0))).toFixed(2)}
+                                                    Remaining Due: ₹{(((finance_id?.downpayment || 0) + (finance_id?.file_charge || 0)) - ((payment1?.amount || 0) + (partialPayment ? (payment2?.amount || 0) : 0))).toFixed(2)}
                                                 </p>
                                             )}
                                         </>
                                     )}
                                 </div>
                             )}
-
-
 
                             {finance_id?.financerName && (
                                 <div className="text-[8px]">
@@ -280,17 +304,13 @@ const PDFGenerator = ({
                                     <p><strong>Price After Finance:</strong> ₹{(Number(priceAfterFinance) + Number(finance_id.downpayment) + Number(finance_id?.file_charge)).toFixed(2)}</p>
                                 </div>
                             )}
-
                         </div>
-
                         {/* Signature slightly above bottom */}
                         <div className="right-0 text-[8px] text-right mt-2 mr-2">
                             Authorized Signature
                         </div>
-
                     </div>
                 </div>
-
             </div>
             <div className="text-center mt-10 print-button">
                 <button

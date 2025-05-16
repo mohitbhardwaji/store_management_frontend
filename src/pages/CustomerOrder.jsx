@@ -271,7 +271,7 @@ const CustomerOrder = () => {
       
         const result = financeRes.data;
       
-        const emiPerMonth = (result.priceAfterFinance / payload.emiTenure).toFixed(2);
+        const emiPerMonth = ((Number(result.priceAfterFinance) + Number(bill?.finance_id?.file_charge)) / payload.emiTenure).toFixed(2);
         const totalPayable = result.priceAfterFinance.toFixed(2);
         console.log(emiPerMonth)
         setFinanceData({
